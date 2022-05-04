@@ -1,13 +1,22 @@
-import express, { response } from 'express';
+import express from 'express';
+import { prisma } from './prisma';
 
 const app = express();
 
 app.use(express.json());
 
-app.post('/feedbacks', (request, response) => {
-    console.log(request.body);
+app.post('/feedbacks', async (request, response) => {
+    const { type, comment, screenshot } = request.body; // Desmembrando o json nas 3 variáveis
 
-    return response.send("Hello World");
+    const feedback = await prisma.feedback.create({
+        data: {
+            type: type,
+            comment: comment,
+            screenshot: screenshot
+        }
+    })
+
+    return response.status(201).json({ data: feedback });
 })
 
 app.listen(3333, () => {
